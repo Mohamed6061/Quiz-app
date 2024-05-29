@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تطبيق الاختبار</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        direction: rtl;
+      }
+
+      .question-container {
+        display: none;
+      }
+
+      .question-container.active {
+        display: block;
+      }
+
+      .correct {
+        background-color: green;
+        color: white;
+      }
+
+      .incorrect {
+        background-color: red;
+        color: white;
+      }
+
+      .option-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px;
+        width: 100%;
+        cursor: pointer;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      #end-of-page {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .l {
+        text-align: right;
+      }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+      <h2 class="text-center">اختبار علم النفس</h2>
+      <div class="progress mt-4">
+        <div
+          id="progress-bar"
+          class="progress-bar"
+          role="progressbar"
+          style="width: 0%"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div id="quiz-container" class="mt-4">
+        <!-- Questions will be inserted here by JavaScript -->
+      </div>
+      <div id="score-container" class="text-center mt-4"></div>
+      <div id="end-of-page" class="mt-4">
+        <p>تم التطوير بواسطة محمد عبد الفتاح</p>
+      </div>
+    </div>
+
+    <audio id="correct-sound" src="correct.mp3"></audio>
+    <audio id="incorrect-sound" src="incorrect.mp3"></audio>
+
+    <script>
+      const questions = [
+        {
+          question: "ليس له تأثير على الأداء الوظيفي الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "توفير بيئة عمل مناسبة يساعد في تحسين الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الرضا الوظيفي يقلل من معدل التغيب والتنقل بين الوظائف",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "العلاقة الجيدة مع الزملاء لا تؤثر على الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "الشعور بالإجهاد في العمل يزيد من الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "مشاركة العاملين في اتخاذ القرارات يمكن أن تزيد من رضاهم الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "الرضا الوظيفي ليس له تأثير على التفكير الإيجابي لدى العاملين",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "موقع المصنع ليس له أي تأثير على الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "تحسين العلاقات مع المشرفين يمكن أن يساعد في زيادة الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الرضا الوظيفي له تأثير سلبي على الحوافز",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "جودة البيئة المادية التي يعمل فيها العاملون تؤثر على رضاهم الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "تقديم الرواتب العادلة يزيد من رضا العاملين",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "تقليل فرص التدريب والتطوير ليس له تأثير على الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "الرضا الوظيفي يمكن أن يقلل من فرص الصراعات في مكان العمل",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "زيادة الأعباء الوظيفية تعتبر طريقة فعالة لتحسين الرضا الوظيفي",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "الثورة الصناعية كانت السبب الرئيسي في ظهور علم النفس الصناعي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "علم النفس الصناعي يهدف إلى تحسين الإنتاجية فقط دون النظر إلى راحة العامل",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "علم النفس الصناعي يركز فقط على الأداء الفردي للعامل",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "دراسة علم النفس الصناعي تشمل تحليل العلاقات بين العمال وآلاتهم",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "القرن التاسع عشر شهد تغيرات قليلة في مجال الصناعة والتجارة",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "هدف علم النفس الصناعي هو تقليل الروح المعنوية للعمال",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "تشمل دراسات علم النفس الصناعي مشاكل التوظيف والفصل",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الثورة الصناعية لم تؤثر على تكوين الأسر في المجتمع",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "علم النفس الصناعي لا يتعامل مع قضايا تسويق المنتجات",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "يهتم علم النفس الصناعي بتطوير البرامج لتحسين كفاءة الإنتاج",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "العلاقات الاجتماعية بين العمال تعتبر جزءاً من دراسات علم النفس الصناعي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "التطورات في التجارة أثرت بشكل كبير على ظهور علم النفس الصناعي",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "علم النفس الصناعي يتجاهل الجانب الإنساني للعامل",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "يمكن تطبيق مبادئ علم النفس الصناعي على جميع قطاعات العمل",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "الإدارة العلمية تعتمد على مبادئ علم النفس لتحسين الإنتاجية",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الثورة الصناعية لم تؤثر على أساليب الإدارة الحديثة",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "دراسة علم النفس الصناعي تشمل تحليل العلاقات بين العمال والإدارة",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "الإدارة العلمية لا تهتم بتقليل التعب وزيادة الفعالية للعامل",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "إحدى أهداف الإدارة العلمية هو وضع الشخص المناسب في المكان المناسب",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question:
+            "الإدارة العلمية لا تعتمد على التجارب العلمية في تحسين العمليات",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question:
+            "التركيز على الكفاءة في الإدارة العلمية يشمل تحسين أدوات العمل",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "التنظيم العلمي للعمل يهمل الجوانب النفسية للعامل",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "دراسة الزمن والحركة تعتبر من أهم مكونات الإدارة العلمية",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الإدارة العلمية ترفض استخدام الآلات لتحسين الإنتاجية",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "الإدارة العلمية تهدف إلى تحقيق أقصى كفاءة بأقل جهد",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+          question: "الإدارة العلمية لا تعتمد على قياس الأداء لتطوير العاملين",
+          options: ["صح", "خطأ"],
+          answer: 1,
+        },
+        {
+          question: "التخصص في العمل هو أحد مبادئ الإدارة العلمية",
+          options: ["صح", "خطأ"],
+          answer: 0,
+        },
+        {
+            question: "ما هي العلاقة بين الرضا الوظيفي والصراعات في مكان العمل؟",
+            options: [
+                "يزيد الرضا من الصراعات",
+                "يقلل الرضا من الصراعات",
+                "ليس له تأثير",
+                "يزيد الصراعات الداخلية فقط"
+            ],
+            answer: 1
+        },
+        {
+            question: "كيف يمكن للمديرين تحسين الرضا الوظيفي بين العاملين؟",
+            options: [
+                "إعطاء مكافآت غير عادلة",
+                "توفير فرص التدريب والتطوير",
+                "تقليل فرص التواصل",
+                "تجاهل مشكلات العاملين"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو تأثير عدم الرضا الوظيفي على الأداء؟",
+            options: [
+                "يحسن الأداء",
+                "يضعف الأداء",
+                "ليس له تأثير",
+                "يزيد من الحوافز"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو تأثير الرضا الوظيفي على التفكير الإيجابي؟",
+            options: [
+                "ليس له تأثير",
+                "يزيد من التفكير الإيجابي",
+                "يقلل من التفكير الإيجابي",
+                "يزيد من الإجهاد النفسي"
+            ],
+            answer: 1
+        },
+        {
+            question: "أي من التالي يعتبر من العوامل المؤثرة على الرضا الوظيفي؟",
+            options: [
+                "موقع المصنع",
+                "الأجور",
+                "طبيعة العلاقات مع المشرفين",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        },
+        {
+            question: "أي من العوامل التالية يعتبر من العوامل البيئية التي تؤثر على الرضا الوظيفي؟",
+            options: [
+                "الرواتب",
+                "العلاقات الشخصية",
+                "جودة البيئة المادية",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        },
+        {
+            question: "ما هو الهدف الرئيسي لعلم النفس الصناعي؟",
+            options: [
+                "تحسين العلاقات الاجتماعية",
+                "زيادة الإنتاجية",
+                "تقليل ساعات العمل",
+                "تحسين جودة الحياة العامة"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هي الفترة الزمنية التي شهدت بداية ظهور علم النفس الصناعي؟",
+            options: [
+                "القرن الثامن عشر",
+                "القرن التاسع عشر",
+                "القرن العشرين",
+                "القرن الواحد والعشرين"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو مفهوم الرضا الوظيفي؟",
+            options: [
+                "شعور إيجابي نحو العمل",
+                "شعور سلبي نحو العمل",
+                "عدم اهتمام بالعمل",
+                "شعور محايد نحو العمل"
+            ],
+            answer: 0
+        },
+        {
+            question: "أي من العوامل التالية يؤثر على الرضا الوظيفي؟",
+            options: [
+                "جودة البيئة المادية",
+                "العلاقة مع الزملاء",
+                "نوع العمل",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        },
+        {
+            question: "كيف يمكن تحسين الرضا الوظيفي؟",
+            options: [
+                "تجاهل آراء العاملين",
+                "توفير بيئة عمل مناسبة",
+                "تقليل الرواتب",
+                "زيادة ساعات العمل"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو تأثير الرضا الوظيفي على أداء العمل؟",
+            options: [
+                "يزيد من الأداء",
+                "يقلل من الأداء",
+                "ليس له تأثير",
+                "يجعل العمل ممل"
+            ],
+            answer: 0
+        },
+        {
+            question: "أي من التالي ليس من طرق تحسين الرضا الوظيفي؟",
+            options: [
+                "الترقية حسب الكفاءة",
+                "توفير بيئة عمل غير مناسبة",
+                "الاستماع لشكاوى العاملين",
+                "تجنب التحيز في التوظيف"
+            ],
+            answer: 1
+        },
+        {
+            question: "كيف يؤثر الرضا الوظيفي على معدل الغياب؟",
+            options: [
+                "يزيد من معدل الغياب",
+                "يقلل من معدل الغياب",
+                "ليس له تأثير",
+                "يزيد من التنقل بين الوظائف"
+            ],
+            answer: 1
+        },
+        {
+            question: "أي من العوامل التالية يعتبر من مظاهر الرضا الوظيفي؟",
+            options: [
+                "قلة الدافعية",
+                "الشعور بالإجهاد",
+                "الشعور بالإيجابية تجاه العمل",
+                "الشعور بالملل"
+            ],
+            answer: 2
+        },
+        {
+            question: "ماذا تتضمن دراسات علم النفس الصناعي؟",
+            options: [
+                "تحسين الكفاءة الإنتاجية",
+                "تحسين الروح المعنوية",
+                "تقليل الحوادث",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        },
+        {
+            question: "من يعتبر مؤسس علم النفس الصناعي؟",
+            options: [
+                "آدم سميث",
+                "أحمد عزت راجح",
+                "جون واتسون",
+                "سيغموند فرويد"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو تأثير علم النفس الصناعي على العامل؟",
+            options: [
+                "تحسين الأداء الشخصي",
+                "تقليل الإنتاجية",
+                "زيادة الضغط النفسي",
+                "تحسين العلاقة مع الزملاء"
+            ],
+            answer: 0
+        },
+        {
+            question: "في أي مجال يتم تطبيق علم النفس الصناعي؟",
+            options: [
+                "التعليم",
+                "الصحة",
+                "الصناعة",
+                "الزراعة"
+            ],
+            answer: 2
+        },
+        {
+            question: "ما هو أحد أهداف علم النفس الصناعي؟",
+            options: [
+                "زيادة الروح المعنوية للعاملين",
+                "تقليل الأجور",
+                "زيادة ساعات العمل",
+                "تقليل جودة الإنتاج"
+            ],
+            answer: 0
+        },
+        {
+            question: "ما هو التركيز الرئيسي لعلم النفس الصناعي؟",
+            options: [
+                "العامل والآلة",
+                "الأسرة",
+                "المدرسة",
+                "الطبيعة"
+            ],
+            answer: 0
+        },
+        {
+            question: "من هو أحد المفكرين الذين أثروا على علم النفس الصناعي؟",
+            options: [
+                "أرسطو",
+                "أفلاطون",
+                "آدم سميث",
+                "فيكتور فرانكل"
+            ],
+            answer: 2
+        },
+        {
+            question: "ما هي أحد نتائج التحضر في المجتمع الصناعي؟",
+            options: [
+                "زيادة العمل الزراعي",
+                "تشكيل أسر صغيرة",
+                "انخفاض عدد المدن",
+                "زيادة العمل في الريف"
+            ],
+            answer: 1
+        },
+        {
+            question: "ماذا يشمل علم النفس الصناعي؟",
+            options: [
+                "تحليل قدرات الشخص",
+                "دراسة بيئة العمل",
+                "تحسين كفاءة الإنتاج",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        },
+        {
+            question: "أي من التالي ليس مجالاً لعلم النفس الصناعي؟",
+            options: [
+                "الهندسة البشرية",
+                "الروح المعنوية",
+                "سيكولوجية التسويق",
+                "الطب البيطري"
+            ],
+            answer: 3
+        },
+        {
+            question: "كيف يمكن تحسين الأداء في علم النفس الصناعي؟",
+            options: [
+                "تحسين ظروف العمل",
+                "تقليل الأجور",
+                "زيادة الضغط النفسي",
+                "تقليل الراحة"
+            ],
+            answer: 0
+        },
+        {
+            question: "ما هو الهدف الرئيسي للإدارة العلمية؟",
+            options: [
+                "تحسين العلاقات الاجتماعية",
+                "زيادة الإنتاجية",
+                "تقليل ساعات العمل",
+                "تحسين جودة الحياة العامة"
+            ],
+            answer: 1
+        },
+        {
+            question: "من هو المؤسس الرئيسي للإدارة العلمية؟",
+            options: [
+                "آدم سميث",
+                "فردريك تايلور",
+                "هنري فايول",
+                "ماكس فيبر"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هي إحدى أدوات الإدارة العلمية لتحسين الإنتاجية؟",
+            options: [
+                "دراسة الزمن والحركة",
+                "زيادة عدد العمال",
+                "تقليل الأجور",
+                "تحسين البيئة الاجتماعية"
+            ],
+            answer: 0
+        } , 
+        {
+            question: "ما هو أحد المبادئ الأساسية للإدارة العلمية؟",
+            options: [
+                "التركيز على العلاقات الإنسانية",
+                "التخصص في العمل",
+                "تقليل استخدام الآلات",
+                "تعزيز العمل الجماعي"
+            ],
+            answer: 1
+        },
+        {
+            question: "كيف يمكن للإدارة العلمية تحسين كفاءة العامل؟",
+            options: [
+                "تحسين الأدوات والآلات",
+                "زيادة الرواتب",
+                "تقليل ساعات العمل",
+                "تعزيز العمل الجماعي"
+            ],
+            answer: 0
+        },
+        {
+            question: "أي من التالي يعتبر جزءًا من الإدارة العلمية؟",
+            options: [
+                "التحفيز الذاتي للعاملين",
+                "تحليل العمل",
+                "التركيز على الإدارة التقليدية",
+                "تقليل عدد العمال"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو التأثير المتوقع لتطبيق الإدارة العلمية على العاملين؟",
+            options: [
+                "زيادة الروح المعنوية",
+                "تقليل الإنتاجية",
+                "زيادة التعب",
+                "تحسين العلاقات الاجتماعية"
+            ],
+            answer: 0
+        },
+        {
+            question: "ما هو الأسلوب المستخدم في الإدارة العلمية لتحليل العمل؟",
+            options: [
+                "المقابلات الشخصية",
+                "دراسة الزمن والحركة",
+                "تقليل الأجور",
+                "زيادة عدد العمال"
+            ],
+            answer: 1
+        },
+        {
+            question: "ما هو الهدف من دراسة الزمن والحركة في الإدارة العلمية؟",
+            options: [
+                "تحسين جودة الحياة للعامل",
+                "زيادة الأجور",
+                "تحسين كفاءة العمل",
+                "تقليل ساعات العمل"
+            ],
+            answer: 2
+        },
+        {
+            question: "من هو أحد المفكرين الذين أثروا على الإدارة العلمية؟",
+            options: [
+                "أرسطو",
+                "أفلاطون",
+                "آدم سميث",
+                "هنري فورد"
+            ],
+            answer: 3
+        },
+        {
+            question: "ما هي إحدى نتائج تطبيق الإدارة العلمية؟",
+            options: [
+                "زيادة الإنتاجية",
+                "تقليل عدد العمال",
+                "تحسين جودة الحياة",
+                "تعزيز العلاقات الإنسانية"
+            ],
+            answer: 0
+        },
+        {
+            question: "ماذا تتضمن الإدارة العلمية؟",
+            options: [
+                "تحليل العمل",
+                "تحسين الأدوات",
+                "زيادة الإنتاجية",
+                "جميع ما سبق"
+            ],
+            answer: 3
+        }
+      ];
+      
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function showQuestion(index) {
+        const quizContainer = document.getElementById("quiz-container");
+        quizContainer.innerHTML = `
+          <div class="question-container l active">
+            <h4>السؤال ${index + 1} من ${questions.length}</h4>
+            <h4>${questions[index].question}</h4>
+            <div id="options-container" class="d-flex flex-wrap"></div>
+          </div>
+        `;
+
+        const optionsContainer = document.getElementById("options-container");
+        const shuffledOptions = shuffle(questions[index].options);
+        shuffledOptions.forEach((option, i) => {
+          optionsContainer.innerHTML += `
+            <div class="option-box" onclick="checkAnswer(${i})">${option}</div>
+          `;
+        });
+      }
+
+      function checkAnswer(selectedIndex) {
+        const answer = questions[currentQuestionIndex].answer;
+
+        if (selectedIndex === answer) {
+          score++;
+          document
+            .querySelectorAll(".option-box")
+            [answer].classList.add("correct");
+          document.getElementById("correct-sound").play();
+        } else {
+          document
+            .querySelectorAll(".option-box")
+            [selectedIndex].classList.add("incorrect");
+          document
+            .querySelectorAll(".option-box")
+            [answer].classList.add("correct");
+          document.getElementById("incorrect-sound").play();
+        }
+
+        setTimeout(() => {
+          currentQuestionIndex++;
+          if (currentQuestionIndex < questions.length) {
+            showQuestion(currentQuestionIndex);
+            updateProgressBar();
+          } else {
+            showScore();
+          }
+        }, 2000);
+      }
+
+      function showScore() {
+        const quizContainer = document.getElementById("quiz-container");
+        const scoreContainer = document.getElementById("score-container");
+        quizContainer.innerHTML = "";
+        scoreContainer.innerHTML = `<h3>نتيجتك ${score} من ${questions.length}</h3>`;
+      }
+
+      function updateProgressBar() {
+        const progressBar = document.getElementById("progress-bar");
+        const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute("aria-valuenow", progress);
+      }
+
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        questions.sort(() => Math.random() - 0.5);
+        showQuestion(currentQuestionIndex);
+        updateProgressBar();
+      });
+    </script>
+</body>
+</html>
