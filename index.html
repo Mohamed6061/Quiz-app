@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>أختبار علم النفس</title>
+    <title>تطبيق الاختبار</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -11,8 +11,17 @@
     <style>
       body {
         direction: rtl;
+        height: 93vh;
+        background-image: url(https://th.bing.com/th/id/R.6a11584…?rik=3ouXfKQLLts6tg&riu=http%3a%2f%2fwww.leadernetworks.com%2fwp-content%2fuploads%2f2017%2f04%2fquiz-background-slider.png&ehk=qAk%2fImcIw2xDaqeGron1zPSacLdCgFGrgA1xphSgy8Y%3d&risl=&pid=ImgRaw&r=0);
+        background-size: contain;
       }
-
+      .n {
+        background: #eeeeeeb8;
+        padding: 24px;
+        box-shadow: 8px 6px 14px 0px black;
+        border-radius: 19px;
+        width: 85%;
+      }
       .question-container {
         display: none;
       }
@@ -39,6 +48,7 @@
         cursor: pointer;
         text-align: center;
         font-weight: 600;
+        box-shadow: -3px -4px 0px 0 #4c4c4c;
       }
 
       #end-of-page {
@@ -49,11 +59,14 @@
       .l {
         text-align: right;
       }
+      p {
+        font-weight: bolder;
+      }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container n mt-5">
       <h2 class="text-center">اختبار علم النفس</h2>
       <div class="progress mt-4">
         <div
@@ -72,8 +85,8 @@
       <div id="score-container" class="text-center mt-4"></div>
       <div id="end-of-page" class="mt-4">
         <p>تم التطوير بواسطة محمد عبد الفتاح</p>
-        <p><a href="https://github.com/Mohamed6061" target="_blank" >Githup</a></p>
-        <p><a href="https://www.linkedin.com/in/mohamed-abdel-fatah-0369b6221" target="_blank" >LinkedIn</a></p>
+        <p><a href="https://github.com/Mohamed6061" >Githup</a></p>
+        <p><a href="https://www.linkedin.com/in/mohamed-abdel-fatah-0369b6221">LinkedIn</a></p>
       </div>
     </div>
 
