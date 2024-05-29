@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>اختبار علم النفس</title>
+    <title>أختبار علم النفس</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -690,7 +690,7 @@
             ],
             answer: 3
         },
-          {
+        {
             question: "ماذا يعني وضع الشخص المناسب في المكان المناسب في سياق اإلدارة العلمية؟",
             options: [
                 "المقابلات الشخصية",
@@ -701,7 +701,7 @@
             answer: 1
         }
       ];
-      console.log(questions.length)
+      
       let currentQuestionIndex = 0;
       let score = 0;
 
@@ -716,8 +716,7 @@
         `;
 
         const optionsContainer = document.getElementById("options-container");
-        const shuffledOptions = shuffle(questions[index].options);
-        shuffledOptions.forEach((option, i) => {
+        questions[index].options.forEach((option, i) => {
           optionsContainer.innerHTML += `
             <div class="option-box" onclick="checkAnswer(${i})">${option}</div>
           `;
